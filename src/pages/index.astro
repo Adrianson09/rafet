@@ -1,0 +1,370 @@
+---
+import Layout from '../layouts/Layout.astro';
+import products from '../data/products.json';
+
+const WA_NUMBER = '50662512000';
+// Cambia esto por tu dominio cuando lo configures
+const SITE_URL = 'https://tudominio.com';
+
+const brands = [...new Set(products.map(p => p.brand))].filter(Boolean).sort();
+const categories = [
+  { key: 'K', label: 'Kids' },
+  { key: 'D', label: 'Dama' },
+  { key: 'F', label: 'Femenino' },
+  { key: 'P', label: 'Hombre' },
+  { key: 'E', label: 'Especial' },
+];
+---
+
+<Layout>
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-rafet">Rafet</span><span class="logo-shop">Shop</span>
+      </div>
+      <a
+        class="wa-header-btn"
+        href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola! Visité su catálogo y tengo una consulta 👟')}`}
+        target="_blank"
+        rel="noopener"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Contáctanos
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Catálogo <span class="accent">Oficial</span></h1>
+      <p>Nike · Adidas · Hoka · New Balance · Reebok · Lacoste · Converse y más</p>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters-bar" id="filters">
+    <div class="filters-inner">
+      <div class="filter-group">
+        <span class="filter-label">Marca</span>
+        <div class="filter-chips" id="brand-filters">
+          <button class="chip active" data-filter="brand" data-value="all">Todas</button>
+          {brands.map(b => (
+            <button class="chip" data-filter="brand" data-value={b}>{b}</button>
+          ))}
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Categoría</span>
+        <div class="filter-chips" id="cat-filters">
+          <button class="chip active" data-filter="cat" data-value="all">Todas</button>
+          {categories.map(c => (
+            <button class="chip" data-filter="cat" data-value={c.key}>{c.label}</button>
+          ))}
+        </div>
+      </div>
+      <div class="filter-group search-group">
+        <input id="search" type="search" placeholder="Buscar modelo..." autocomplete="off" />
+      </div>
+    </div>
+    <div class="results-count"><span id="count">{products.length}</span> productos</div>
+  </section>
+
+  <!-- GRID -->
+  <main class="catalog" id="catalog">
+    {products.map(product => (
+      <article
+        class="card"
+        data-brand={product.brand}
+        data-cat={product.category}
+        data-name={`${product.brand} ${product.model}`.toLowerCase()}
+      >
+        <div class="card-img-wrap">
+          <img
+            src={`/catalogo_fotos/${product.id}.jpg`}
+            alt={`${product.brand} ${product.model} – Tallas ${product.sizes}`}
+            loading="lazy"
+            decoding="async"
+          />
+          {product.category && (
+            <span class={`badge badge-${product.category.toLowerCase()}`}>
+              {product.category === 'K' ? 'Kids' :
+               product.category === 'D' ? 'Dama' :
+               product.category === 'F' ? 'Femenino' :
+               product.category === 'P' ? 'Hombre' :
+               product.category === 'E' ? 'Especial' : product.category}
+            </span>
+          )}
+        </div>
+        <div class="card-body">
+          <p class="card-brand">{product.brand}</p>
+          <p class="card-model">{product.model}</p>
+          {product.sizes && <p class="card-sizes">Tallas: <strong>{product.sizes}</strong></p>}
+          <a
+            class="buy-btn"
+            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
+              `Hola! Me interesa este producto de Rafet Shop 👟\n\n*${product.brand} ${product.model}*\nTallas: ${product.sizes}\n\n${SITE_URL}/catalogo_fotos/${product.id}.jpg\n\n¿Cuál es el precio y disponibilidad?`
+            )}`}
+            target="_blank"
+            rel="noopener"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Consultar precio
+          </a>
+        </div>
+      </article>
+    ))}
+  </main>
+
+  <footer>
+    <p>© 2025 Rafet Shop · <a href={`https://wa.me/${WA_NUMBER}`} target="_blank" rel="noopener">WhatsApp</a></p>
+  </footer>
+</Layout>
+
+<style>
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,15,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+  .logo-rafet { color: var(--text); }
+  .logo-shop { color: var(--accent); }
+  .wa-header-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .wa-header-btn:hover { opacity: 0.85; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+  .hero-inner { max-width: 700px; margin: 0 auto; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 0.75rem; }
+  .accent { color: var(--accent); }
+  .hero p { color: var(--text-muted); font-size: 1rem; }
+
+  /* FILTERS */
+  .filters-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 57px;
+    z-index: 90;
+  }
+  .filters-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+  .filter-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .search-group input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    width: 200px;
+    transition: border-color 0.15s;
+  }
+  .search-group input:focus { border-color: var(--accent); }
+  .results-count {
+    max-width: 1400px;
+    margin: 0.5rem auto 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* CATALOG GRID */
+  .catalog {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover { transform: translateY(-3px); border-color: #3e3e3e; }
+  .card[data-hidden="true"] { display: none; }
+
+  .card-img-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    background: #111;
+    overflow: hidden;
+  }
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.04); }
+
+  .badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+  .badge-k { background: #7c3aed; color: #fff; }
+  .badge-d { background: #ec4899; color: #fff; }
+  .badge-f { background: #f97316; color: #fff; }
+  .badge-p { background: #3b82f6; color: #fff; }
+  .badge-e { background: #10b981; color: #fff; }
+
+  .card-body {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+  }
+  .card-brand { font-size: 0.7rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  .card-model { font-size: 0.9rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .card-sizes { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.1rem; }
+  .card-sizes strong { color: var(--text); }
+
+  .buy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: opacity 0.2s;
+  }
+  .buy-btn:hover { opacity: 0.85; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .catalog { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; padding: 0.75rem; }
+    .filters-bar { position: static; }
+    .hero { padding: 2rem 1rem; }
+  }
+</style>
+
+<script>
+  const cards = document.querySelectorAll('.card') as NodeListOf<HTMLElement>;
+  const countEl = document.getElementById('count')!;
+  let activeBrand = 'all';
+  let activeCat = 'all';
+  let searchTerm = '';
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach(card => {
+      const brand = card.dataset.brand ?? '';
+      const cat = card.dataset.cat ?? '';
+      const name = card.dataset.name ?? '';
+      const matchBrand = activeBrand === 'all' || brand === activeBrand;
+      const matchCat = activeCat === 'all' || cat === activeCat;
+      const matchSearch = !searchTerm || name.includes(searchTerm);
+      const show = matchBrand && matchCat && matchSearch;
+      card.dataset.hidden = show ? 'false' : 'true';
+      if (show) visible++;
+    });
+    countEl.textContent = String(visible);
+  }
+
+  document.querySelectorAll('.chip[data-filter="brand"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.chip[data-filter="brand"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeBrand = (btn as HTMLElement).dataset.value ?? 'all';
+      applyFilters();
+    });
+  });
+
+  document.querySelectorAll('.chip[data-filter="cat"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.chip[data-filter="cat"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = (btn as HTMLElement).dataset.value ?? 'all';
+      applyFilters();
+    });
+  });
+
+  document.getElementById('search')!.addEventListener('input', (e) => {
+    searchTerm = (e.target as HTMLInputElement).value.toLowerCase();
+    applyFilters();
+  });
+</script>
