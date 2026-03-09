@@ -58,10 +58,7 @@ vite.config.timestamp-*
 
 # PDFs e imágenes generadas o exportadas
 *.pdf
-*.png
-*.jpg
-*.jpeg
-*.webp
+
 
 # JSON generados manualmente o exportaciones
 catalogo_*.json
